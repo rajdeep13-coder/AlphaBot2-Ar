@@ -1,8 +1,8 @@
-# AlphaBot V2-Ar Arduino Robot Kit
+# AlphaBot V2-Ar 
 
 <div align="center">
 
-![AlphaBot V2](https://via.placeholder.com/600x300?text=AlphaBot+V2-Ar)
+![AlphaBot V2](files/bot_image1.jpeg)
 
 **A Complete Arduino-Based Robotics Learning Platform**
 
@@ -132,8 +132,6 @@ AlphaBot-2/
 ├── README.md                          # This file
 ├── TASKS.md                          # Complete tasks roadmap
 ├── REFERENCES.md                     # Internet resources & links
-├── LICENSE                           # MIT License
-├── CONTRIBUTING.md                   # Contribution guidelines
 │
 ├── 01_Sensors/                       # Phase 1: Individual sensor testing
 │   ├── 01_motor_control.ino
