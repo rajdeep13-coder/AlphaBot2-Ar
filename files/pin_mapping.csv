@@ -1,0 +1,41 @@
+Component,Function,Arduino Pin,Pin Type,Voltage,Notes
+Motor A,PWM Speed Control,5,PWM,5V,LEFT MOTOR - Speed from 0-255
+Motor A,Direction Control,4,Digital,5V,LEFT MOTOR - HIGH=Forward LOW=Backward
+Motor B,PWM Speed Control,6,PWM,5V,RIGHT MOTOR - Speed from 0-255
+Motor B,Direction Control,7,Digital,5V,RIGHT MOTOR - HIGH=Forward LOW=Backward
+Line Sensor,Left Sensor,A0,Analog,5V,Reads 0-1023 values
+Line Sensor,Center Sensor,A1,Analog,5V,Reads 0-1023 values
+Line Sensor,Right Sensor,A2,Analog,5V,Reads 0-1023 values
+Ultrasonic Sensor,Trigger Signal,8,Digital,5V,50μs pulse to trigger measurement
+Ultrasonic Sensor,Echo Signal,9,Digital,5V,Pulse width encodes distance
+RGB LED,Data Line,12,Digital,5V,WS2812B NeoPixel protocol
+Buzzer,Sound Output,10,PWM,5V,Tone frequency controlled via PWM
+IR Receiver,Signal Input,11,Digital,5V,5V tolerant IR sensor
+Joystick,X-Axis (Horizontal),A6,Analog,5V,0-1023 left to right
+Joystick,Y-Axis (Vertical),A7,Analog,5V,0-1023 down to up
+Joystick,Button,2,Digital,5V,External interrupt capable
+OLED Display,SDA (Data),A4,I2C,5V,I2C communication line
+OLED Display,SCL (Clock),A5,I2C,5V,I2C communication line
+I2C Expander,SDA,A4,I2C,5V,PC8574 I/O expander - shared with OLED
+I2C Expander,SCL,A5,I2C,5V,PC8574 I/O expander - shared with OLED
+Bluetooth Module,RX,1,UART,3.3V,RX of HC-05 (via voltage divider)
+Bluetooth Module,TX,0,UART,5V,TX to HC-05 directly
+Battery,Positive Terminal,VCC,Power,7.4V,Two 3.7V 14500 cells in series
+Battery,Ground,GND,Power,0V,Common ground
+USB Power,5V Output,5V,Power,5V,USB charging port regulated output
+USB Power,GND,GND,Power,0V,Common ground
+
+Summary Notes:
+- Total Analog Pins Used: 6 (A0-A2 sensors + A4-A5 I2C + A6-A7 Joystick)
+- Total Digital Pins Used: 8 (4 motor + 1 RGB + 1 buzzer + 1 IR + 1 joystick button + 2 ultrasonic)
+- PWM Capable Pins: 3,5,6,9,10,11 (currently using 5,6,10,12)
+- I2C Pins: A4(SDA) A5(SCL)
+- UART Pins: 0(RX) 1(TX) - Use SoftwareSerial for Bluetooth
+- Interrupt Pins: 2,3 (using 2 for joystick button)
+
+Important Voltage Notes:
+- Joystick: 5V analog input (0-1023 range)
+- OLED Display: 5V logic (I2C with pull-ups)
+- HC-05 Bluetooth: 3.3V logic levels (use voltage divider on RX line)
+- All sensors: 5V logic unless specified
+- Motors: 6V supply from battery pack via TB6612FNG driver
