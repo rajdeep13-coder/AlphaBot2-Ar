@@ -53,14 +53,18 @@
 // RGB LED CONFIGURATION
 // ============================================================================
 
+#define RGB_LED_PIN 12
 #define RGB_LED_COUNT 3
 #define RGB_BRIGHTNESS_MAX     255
 #define RGB_BRIGHTNESS_DEFAULT 100
 
+// Predefined colors (RGB values)
 #define COLOR_RED      0xFF0000
 #define COLOR_GREEN    0x00FF00
 #define COLOR_BLUE     0x0000FF
 #define COLOR_YELLOW   0xFFFF00
+#define COLOR_CYAN     0x00FFFF
+#define COLOR_MAGENTA  0xFF00FF
 #define COLOR_WHITE    0xFFFFFF
 #define COLOR_OFF      0x000000
 
@@ -68,11 +72,15 @@
 // BUZZER CONFIGURATION
 // ============================================================================
 
+#define BUZZER_PIN 10
+
+// Tone frequencies (Hz)
 #define TONE_ERROR   400
 #define TONE_WARNING 800
 #define TONE_SUCCESS 1200
 #define TONE_ALERT   2000
 
+// Tone durations (milliseconds)
 #define TONE_SHORT_DURATION  100
 #define TONE_MEDIUM_DURATION 500
 #define TONE_LONG_DURATION   1000
@@ -82,18 +90,47 @@
 // ============================================================================
 
 #define JOYSTICK_CENTER_X   512
+
+// ============================================================================
+// OLED DISPLAY CONFIGURATION
+// ============================================================================
+
+#define OLED_I2C_ADDRESS 0x3C  // Default I2C address (may be 0x3D on some boards)
+#define OLED_WIDTH  128        // Pixels
+#define OLED_HEIGHT 64         // Pixels
+
+// Font sizes
+#define FONT_SMALL 1
+#define FONT_MEDIUM 2
+#define FONT_LARGE 3
 #define JOYSTICK_CENTER_Y   512
 #define JOYSTICK_DEADZONE   50
 #define JOYSTICK_MIN_VALUE  0
 #define JOYSTICK_MAX_VALUE  1023
 
+// =============================
+
 // ============================================================================
-// PID CONTROL (Line Tracking)
+// IR RECEIVER CONFIGURATION
 // ============================================================================
 
-#define PID_KP 0.8   // Proportional
-#define PID_KI 0.05  // Integral
-#define PID_KD 0.3   // Derivative
+// IR remote button codes (customize based on your remote)
+#define IR_BUTTON_UP     0x0
+#define IR_BUTTON_DOWN   0x1
+#define IR_BUTTON_LEFT   0x2
+#define IR_BUTTON_RIGHT  0x3
+#define IR_BUTTON_OK     0x4
+#define IR_BUTTON_1      0x5
+#define IR_BUTTON_2      0x6===============================================
+// Enable/disable debug output
+#define DEBUG_SERIAL        true      // Print debug messages to Serial
+#define DEBUG_MOTOR         true      // Print motor commands
+#define DEBUG_SENSORS       true      // Print sensor readings
+#define DEBUG_LINE_TRACKING true      // Print line tracking data
+#define DEBUG_BLUETOOTH     false     // Print Bluetooth data
+
+// Serial print intervals (to reduce spam)
+#define DEBUG_PRINT_INTERVAL_MS 100   // Only print debug every 100ms
 
 // ============================================================================
 // COMMUNICATION
@@ -109,14 +146,15 @@
 #define MAIN_LOOP_DELAY_MS      10
 #define SENSOR_READ_INTERVAL_MS 20
 #define MOTOR_COMMAND_TIMEOUT_MS 5000
-
-// ============================================================================
-// DEBUG FLAGS
-// ============================================================================
-
-#define DEBUG_SERIAL        true
-#define DEBUG_MOTOR         true
-#define DEBUG_SENSORS       true
+// Enable/disable features
+#define ENABLE_MOTOR_CONTROL       true
+#define ENABLE_LINE_TRACKING       true
+#define ENABLE_OBSTACLE_AVOIDANCE  true
+#define ENABLE_RGB_LED             true
+#define ENABLE_BUZZER              true
+#define ENABLE_OLED                true
+#define ENABLE_BLUETOOTH           false  // Disable until fully configured
+#define ENABLE_IR_CONTROL          true   // Enabled for IR remote control
 #define DEBUG_LINE_TRACKING true
 
 #define DEBUG_PRINT_INTERVAL_MS 100
