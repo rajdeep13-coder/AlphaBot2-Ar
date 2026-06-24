@@ -2,7 +2,7 @@
  * @file AlphaBot2_Motor.h
  * @brief Motor Control Library for AlphaBot V2-Ar
  * @description Provides functions for motor speed, direction, and movement control
- * @author Your Name
+ * @author Rajdeep Paul
  * @version 1.0
  */
 
@@ -10,8 +10,8 @@
 #define ALPHABOT2_MOTOR_H
 
 #include <Arduino.h>
-#include "../05_Configuration/pins.h"
-#include "../05_Configuration/config.h"
+#include "../Configuration/pins.h"
+#include "../Configuration/config.h"
 
 // ============================================================================
 // MOTOR CONTROL CLASS

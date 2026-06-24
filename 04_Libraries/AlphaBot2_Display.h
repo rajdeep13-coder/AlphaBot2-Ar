@@ -2,7 +2,7 @@
  * @file AlphaBot2_Display.h
  * @brief Display Control Library for AlphaBot V2-Ar
  * @description Provides OLED display and RGB LED control functions
- * @author Your Name
+ * @author Rajdeep Paul
  * @version 1.0
  */
 
@@ -14,8 +14,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_NeoPixel.h>
-#include "../05_Configuration/pins.h"
-#include "../05_Configuration/config.h"
+#include "../Configuration/pins.h"
+#include "../Configuration/config.h"
 
 // ============================================================================
 // OLED DISPLAY CLASS

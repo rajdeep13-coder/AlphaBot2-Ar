@@ -2,7 +2,7 @@
  * @file AlphaBot2_Utilities.h
  * @brief Utility Functions for AlphaBot V2-Ar
  * @description Helper functions for timing, math, buzzer, and debugging
- * @author Your Name
+ * @author Rajdeep Paul
  * @version 1.0
  */
 
@@ -10,8 +10,8 @@
 #define ALPHABOT2_UTILITIES_H
 
 #include <Arduino.h>
-#include "../05_Configuration/pins.h"
-#include "../05_Configuration/config.h"
+#include "../Configuration/pins.h"
+#include "../Configuration/config.h"
 
 // ============================================================================
 // BUZZER CLASS

@@ -2,7 +2,7 @@
  * @file AlphaBot2_Sensor.h
  * @brief Sensor Library for AlphaBot V2-Ar
  * @description Provides functions for reading line sensors, ultrasonic, and joystick
- * @author Your Name
+ * @author  Rajdeep Paul
  * @version 1.0
  */
 
@@ -10,8 +10,8 @@
 #define ALPHABOT2_SENSOR_H
 
 #include <Arduino.h>
-#include "../05_Configuration/pins.h"
-#include "../05_Configuration/config.h"
+#include "../Configuration/pins.h"
+#include "../Configuration/config.h"
 
 // ============================================================================
 // LINE SENSOR CLASS
