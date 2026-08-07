@@ -29,6 +29,9 @@ const int IR_RECV_PIN = 4;
 IRrecv irrecv(IR_RECV_PIN);
 decode_results results;
 
+const unsigned long IR_LED_PULSE_MS = 120;
+unsigned long irLedOffAt = 0;
+
 const unsigned long KEY_2  = 0xFF18E7;   // Forward
 const unsigned long KEY_8  = 0xFF4AB5;   // Reverse
 const unsigned long KEY_4  = 0xFF00FF;   // Left
@@ -49,6 +52,9 @@ enum Direction { NONE, FORWARD, BACKWARD, LEFT, RIGHT };
 Direction currentDirection = NONE;
 
 void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+
   pinMode(PWMA, OUTPUT);
   pinMode(AIN1, OUTPUT);
   pinMode(AIN2, OUTPUT);
@@ -65,9 +71,16 @@ void setup() {
 }
 
 void loop() {
+  if (millis() >= irLedOffAt) {
+    digitalWrite(LED_BUILTIN, LOW);
+  }
+
   // 1. Check for IR commands
   if (irrecv.decode(&results)) {
     unsigned long value = results.value;
+
+    digitalWrite(LED_BUILTIN, HIGH);
+    irLedOffAt = millis() + IR_LED_PULSE_MS;
 
     if (value != REPEAT) {
       Serial.print("Code: 0x");

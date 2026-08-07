@@ -2,28 +2,26 @@
  * @file CompanionPet.ino
  * @brief AlphaBot2 Desktop Companion Pet — main sketch.
  *
- * Hardware required (stock AlphaBot2-Ar):
- *   - TB6612FNG motors  (D4-D7)
- *   - HC-SR04 ultrasonic (D8-D9)
- *   - Buzzer             (D10)
- *   - WS2812B ×4         (D12)
- *   - SSD1306 OLED       (I2C A4/A5)
- *   - Joystick button    (D2) — acts as "pet me" until TTP223 is wired
+ * Hardware (all permanently connected):
+ *   TB6612FNG motors      D4-D7
+ *   HC-SR04 ultrasonic    D8, D9
+ *   Passive buzzer        D10   (fallback audio)
+ *   IR receiver           D11
+ *   WS2812B x4            D12
+ *   SSD1306 OLED          A4/A5 (I2C)
+ *   KY-038 sound sensor   D2
+ *   SG90 servo (tail)     D3
+ *   TTP223 touch pad      A0
+ *   DFPlayer Mini         A1 (TX), A2 (RX)
  *
- * Optional (uncomment flags in PetConfig.h when wired):
- *   - DFPlayer Mini      (A1/A2 SoftwareSerial)
- *   - TTP223 touch pad   (A0)
- *   - KY-038 sound sensor(D2 — replaces joystick button)
- *   - SG90 servo         (D3)
+ * Line sensors (A0-A2) are NOT connected — those pins are in use by pet HW.
+ * D13 = built-in LED, unused.
  *
  * No delay() in loop. All animation, lighting, sound, and motor gestures
  * are non-blocking.
  *
  * Libraries (install via Arduino Library Manager):
- *   - Adafruit SSD1306
- *   - Adafruit GFX Library
- *   - Adafruit NeoPixel
- *   (Optional: DFRobotDFPlayerMini — only when ENABLE_DFPLAYER is set)
+ *   Adafruit SSD1306, Adafruit GFX, Adafruit NeoPixel, DFRobotDFPlayerMini
  */
 
 #include <Wire.h>
@@ -60,11 +58,10 @@ void setup() {
   sensors.begin();
   Serial.println(F("[INIT] Sensors   OK"));
 
-  if (!face.begin()) {
-    Serial.println(F("[INIT] OLED FAIL — halting"));
-    while (1);   // Can't run without the eyes
-  }
-  Serial.println(F("[INIT] OLED      OK"));
+  face.begin();  // Non-fatal — warns if OLED missing, bot runs anyway
+  Serial.println(face.hasDisplay()
+    ? F("[INIT] OLED      OK")
+    : F("[INIT] OLED      MISSING (running without display)"));
 
   lights.begin();
   Serial.println(F("[INIT] NeoPixel  OK"));
@@ -86,18 +83,10 @@ void setup() {
   // --- Enter IDLE state ---
   behavior.forceState(STATE_IDLE);
 
-  Serial.println(F("[BOOT] Ready! Press joystick button to pet."));
+  Serial.println(F("[BOOT] Ready — all systems active."));
+  Serial.println(F("       Touch pad (A0) to pet."));
   Serial.println(F("       Wave hand near ultrasonic to interact."));
-
-  #ifndef ENABLE_TOUCH_SENSOR
-    Serial.println(F("       (TTP223 not enabled — using joy btn on D2)"));
-  #endif
-  #ifndef ENABLE_SOUND_SENSOR
-    Serial.println(F("       (KY-038 not enabled — ALERT disabled)"));
-  #endif
-  #ifndef ENABLE_DFPLAYER
-    Serial.println(F("       (DFPlayer not enabled — buzzer fallback)"));
-  #endif
+  Serial.println(F("       Clap/sound triggers ALERT state."));
 }
 
 // =================================================================

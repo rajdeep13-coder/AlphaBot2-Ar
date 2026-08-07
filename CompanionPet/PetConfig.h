@@ -3,7 +3,16 @@
  * @brief Central configuration for AlphaBot2 Companion Pet
  *
  * Pin mapping follows the AlphaBot2-Ar manual (4-pin motor scheme).
- * Uncomment ENABLE_* flags as you wire each new component.
+ *
+ * FINAL HARDWARE STATE — all pet peripherals physically connected:
+ *   TTP223 touch pad    → A0
+ *   DFPlayer Mini       → A1 (TX), A2 (RX)   [SoftwareSerial]
+ *   KY-038 sound sensor → D2
+ *   SG90 servo (tail)   → D3
+ *
+ * Line sensors (A0-A2) are NOT connected — pins repurposed for pet HW.
+ * Joystick button fallback removed — TTP223 is the real touch input.
+ * D13 = built-in LED only, not used by any module.
  */
 
 #ifndef PET_CONFIG_H
@@ -12,12 +21,12 @@
 #include <Arduino.h>
 
 // ============================================================================
-// FEATURE FLAGS — Uncomment when the hardware is physically connected
+// FEATURE FLAGS — All pet hardware is physically connected and enabled
 // ============================================================================
-// #define ENABLE_DFPLAYER       // DFPlayer Mini + 8-ohm speaker (SoftSerial on A1/A2)
-// #define ENABLE_TOUCH_SENSOR   // TTP223 capacitive touch pad on A0
-// #define ENABLE_SOUND_SENSOR   // KY-038 sound sensor on D2  (replaces joystick btn)
-// #define ENABLE_SERVO          // SG90 micro servo for tail wag on D3
+#define ENABLE_DFPLAYER       // DFPlayer Mini + 8-ohm speaker (SoftSerial on A1/A2)
+#define ENABLE_TOUCH_SENSOR   // TTP223 capacitive touch pad on A0
+#define ENABLE_SOUND_SENSOR   // KY-038 sound sensor on D2
+#define ENABLE_SERVO          // SG90 micro servo for tail wag on D3
 
 // ============================================================================
 // PIN DEFINITIONS — Matches AlphaBot2-Ar manual / pins.h (Scheme A, 4-pin)
@@ -48,29 +57,19 @@
 #define SCREEN_W       128
 #define SCREEN_H       64
 
-// ---------- Substitute touch when no dedicated sensor is wired ----------
-// Joystick button on D2 acts as "pet me" input (active-LOW, internal pull-up)
-#ifndef ENABLE_SOUND_SENSOR
-  #define TOUCH_FALLBACK_PIN  2
-#endif
+// ---------- Pet hardware pin assignments ----------
+// TTP223 capacitive touch pad (active-HIGH)
+#define TOUCH_PIN    A0
 
-// ---------- New-hardware pins (guarded by feature flags) ----------
-#ifdef ENABLE_TOUCH_SENSOR
-  #define TOUCH_PIN    A0   // TTP223 digital out (active-HIGH typical)
-#endif
+// DFPlayer Mini via SoftwareSerial
+#define DFP_TX_PIN   A1   // Arduino TX → DFPlayer RX
+#define DFP_RX_PIN   A2   // Arduino RX ← DFPlayer TX
 
-#ifdef ENABLE_DFPLAYER
-  #define DFP_TX_PIN   A1   // Arduino TX → DFPlayer RX
-  #define DFP_RX_PIN   A2   // Arduino RX ← DFPlayer TX
-#endif
+// KY-038 sound sensor — D2 (joystick button fallback removed)
+#define SOUND_PIN    2
 
-#ifdef ENABLE_SOUND_SENSOR
-  #define SOUND_PIN    2    // KY-038 digital out
-#endif
-
-#ifdef ENABLE_SERVO
-  #define SERVO_PIN    3    // SG90 PWM
-#endif
+// SG90 servo — D3 (only remaining free PWM pin)
+#define SERVO_PIN    3
 
 // ============================================================================
 // BEHAVIOUR TIMING (ms)

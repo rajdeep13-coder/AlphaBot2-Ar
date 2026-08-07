@@ -30,16 +30,8 @@ public:
 
     pinMode(US_TRIG_PIN, OUTPUT);
     pinMode(US_ECHO_PIN, INPUT);
-
-    #ifdef TOUCH_FALLBACK_PIN
-      pinMode(TOUCH_FALLBACK_PIN, INPUT_PULLUP);
-    #endif
-    #ifdef ENABLE_TOUCH_SENSOR
-      pinMode(TOUCH_PIN, INPUT);
-    #endif
-    #ifdef ENABLE_SOUND_SENSOR
-      pinMode(SOUND_PIN, INPUT);
-    #endif
+    pinMode(TOUCH_PIN, INPUT);           // TTP223 (active-HIGH)
+    pinMode(SOUND_PIN, INPUT);           // KY-038 digital threshold
 
     clearEvents();
   }
@@ -109,21 +101,11 @@ private:
   }
 
   bool readTouch() {
-    #ifdef ENABLE_TOUCH_SENSOR
-      return digitalRead(TOUCH_PIN) == HIGH;     // TTP223 active-HIGH
-    #elif defined(TOUCH_FALLBACK_PIN)
-      return digitalRead(TOUCH_FALLBACK_PIN) == LOW;  // Joystick btn active-LOW
-    #else
-      return false;
-    #endif
+    return digitalRead(TOUCH_PIN) == HIGH;   // TTP223 active-HIGH
   }
 
   bool readSound() {
-    #ifdef ENABLE_SOUND_SENSOR
-      return digitalRead(SOUND_PIN) == HIGH;     // KY-038 digital out
-    #else
-      return false;
-    #endif
+    return digitalRead(SOUND_PIN) == HIGH;   // KY-038 digital threshold
   }
 };
 

@@ -27,18 +27,25 @@ public:
   FaceRenderer() : _disp(SCREEN_W, SCREEN_H, &Wire, -1) {}
 
   bool begin() {
-    if (!_disp.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) return false;
-    _disp.clearDisplay();
-    _disp.display();
-    _currentExpr    = EXPR_NEUTRAL;
-    _blinkFrame     = 0;
-    _nextBlinkTime  = millis() + random(4000, 7001);
-    _dirty          = true;
-    return true;
+    _hasDisplay = _disp.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR);
+    if (_hasDisplay) {
+      _disp.clearDisplay();
+      _disp.display();
+    } else {
+      Serial.println(F("[WARN] OLED not found — running without display"));
+    }
+    _currentExpr   = EXPR_NEUTRAL;
+    _blinkFrame    = 0;
+    _nextBlinkTime = millis() + random(4000, 7001);
+    _dirty         = true;
+    return true;   // never halt — display is optional
   }
+
+  bool hasDisplay() const { return _hasDisplay; }
 
   /** Blocking wake-up animation — call once in setup(). */
   void bootAnimation() {
+    if (!_hasDisplay) return;
     // 1. Closed eyes
     _disp.clearDisplay();
     drawAsleepEyes();
@@ -110,6 +117,7 @@ public:
 
 private:
   Adafruit_SSD1306 _disp;
+  bool             _hasDisplay;
   Expression       _currentExpr;
   uint8_t          _blinkFrame;      // 0 = no blink, 1-5 = blink anim
   unsigned long    _blinkTimer;
@@ -120,6 +128,7 @@ private:
   // Master render — selects the right draw routine
   // ================================================================
   void render() {
+    if (!_hasDisplay) return;
     _disp.clearDisplay();
 
     // Compute eyelid percent from blink overlay

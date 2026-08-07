@@ -20,10 +20,14 @@
 // SENSOR PINS
 // ============================================================================
 
-// Line Sensors (Reflective IR)
-#define LINE_SENSOR_LEFT   A0
-#define LINE_SENSOR_CENTER A1
-#define LINE_SENSOR_RIGHT  A2
+// Line Sensors (A0-A2) — NOT CONNECTED in Companion Pet build
+// These pins are repurposed:
+//   A0 → TTP223 touch pad (TOUCH_PIN in PetConfig.h)
+//   A1 → DFPlayer Mini SoftwareSerial TX (DFP_TX_PIN)
+//   A2 → DFPlayer Mini SoftwareSerial RX (DFP_RX_PIN)
+// #define LINE_SENSOR_LEFT   A0  // REPURPOSED
+// #define LINE_SENSOR_CENTER A1  // REPURPOSED
+// #define LINE_SENSOR_RIGHT  A2  // REPURPOSED
 
 // Ultrasonic Distance Sensor (HC-SR04)
 #define ULTRASONIC_TRIG_PIN 8
@@ -59,9 +63,11 @@
 #define OLED_SDA_PIN A4
 #define OLED_SCL_PIN A5
 
-// Bluetooth Module (HC-05) - uses UART (pins 0, 1)
-#define BLUETOOTH_RX_PIN 0
-#define BLUETOOTH_TX_PIN 1
+// Bluetooth Module (HC-05) — DISABLED
+// D0/D1 conflict with USB upload; ENABLE_BLUETOOTH = false in config.h
+// Do not connect HC-05 during development.
+// #define BLUETOOTH_RX_PIN 0
+// #define BLUETOOTH_TX_PIN 1
 
 // ============================================================================
 // POWER PINS
