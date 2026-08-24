@@ -45,12 +45,12 @@
 // Buzzer (always available as fallback audio)
 #define BUZZER_PIN     10
 
-// IR Receiver
-#define IR_RECV_PIN    11
+// IR Receiver — NOT used in CompanionPet (IRremote library not included)
+// #define IR_RECV_PIN    11
 
-// WS2812B RGB LEDs
+// WS2812B RGB LEDs — 3 physical LEDs on the AlphaBot2-Ar
 #define RGB_LED_PIN    12
-#define NUM_LEDS       4
+#define NUM_LEDS       3
 
 // OLED Display (I2C on A4/A5)
 #define OLED_ADDR      0x3C
@@ -65,7 +65,10 @@
 #define DFP_TX_PIN   A1   // Arduino TX → DFPlayer RX
 #define DFP_RX_PIN   A2   // Arduino RX ← DFPlayer TX
 
-// KY-038 sound sensor — D2 (joystick button fallback removed)
+// KY-038 sound sensor — D2
+// ⚠️ HARDWARE NOTE: The joystick button is also hardwired to D2 on the AlphaBot2-Ar PCB.
+// CompanionPet does NOT use the joystick — physically unplug the joystick module
+// from its connector before running this sketch. D2 is then free for KY-038 only.
 #define SOUND_PIN    2
 
 // SG90 servo — D3 (only remaining free PWM pin)

@@ -1,51 +1,148 @@
-/**
- * I2C Scanner — finds all connected I2C devices and their addresses.
- * Upload this sketch, open Serial Monitor at 115200 baud.
- * Look for the OLED address (typically 0x3C or 0x3D).
- * After finding it, update OLED_ADDR in PetConfig.h and re-upload CompanionPet.
- */
+// --- Motor Control Pins for AlphaBot2-Ar ---
+#define PWMA 6  // Left Motor Speed pin (ENA)
+#define AIN2 A0 // Left Motor Forward (IN2)
+#define AIN1 A1 // Left Motor Backward (IN1)
 
-#include <Wire.h>
+#define PWMB 5  // Right Motor Speed pin (ENB)
+#define BIN1 A2 // Right Motor Forward (IN3)
+#define BIN2 A3 // Right Motor Backward (IN4)
+
+// --- Confirmed Ultrasonic Sensor Pins ---
+#define TRIG_PIN 3 
+#define ECHO_PIN 2 
+
+// --- Configuration ---
+#define SAFE_DISTANCE 20  // Stop if obstacle is within 20 cm
+#define SPEED 130         // Motor cruising speed (0 to 255)
+#define TURN_SPEED 95     // LOWERED: Slow speed for smooth, low-inertia turns
+#define TURN_90_DELAY 850 // INCREASED: Since the bot turns slower, it needs more time to reach 90 degrees
 
 void setup() {
   Serial.begin(115200);
-  Wire.begin();
-  delay(500);
-
-  Serial.println(F(""));
-  Serial.println(F("=== I2C Scanner ==="));
-  Serial.println(F("Scanning for devices..."));
-  Serial.println(F(""));
-
-  uint8_t found = 0;
-
-  for (uint8_t addr = 1; addr < 127; addr++) {
-    Wire.beginTransmission(addr);
-    uint8_t err = Wire.endTransmission();
-
-    if (err == 0) {
-      Serial.print(F("  Device found at 0x"));
-      if (addr < 16) Serial.print(F("0"));
-      Serial.print(addr, HEX);
-
-      // Known device hints
-      if (addr == 0x3C || addr == 0x3D) Serial.print(F("  <-- OLED SSD1306"));
-      if (addr == 0x20 || addr == 0x38) Serial.print(F("  <-- PCF8574 I/O Expander"));
-      if (addr == 0x68)                 Serial.print(F("  <-- MPU6050 / DS3231 RTC"));
-
-      Serial.println();
-      found++;
-    }
-  }
-
-  Serial.println(F(""));
-  if (found == 0) {
-    Serial.println(F("No devices found! Check wiring."));
-  } else {
-    Serial.print(found);
-    Serial.println(F(" device(s) found."));
-  }
-  Serial.println(F("==================="));
+  Serial.println("Starting Low-Inertia Smart Obstacle Avoider...");
+  
+  pinMode(PWMA, OUTPUT);
+  pinMode(AIN1, OUTPUT);
+  pinMode(AIN2, OUTPUT);
+  pinMode(PWMB, OUTPUT);
+  pinMode(BIN1, OUTPUT);
+  pinMode(BIN2, OUTPUT);
+  
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
 }
 
-void loop() {}
+void loop() {
+  long distance = getDistance();
+  
+  if (distance > 0 && distance <= SAFE_DISTANCE) {
+    Serial.println("Obstacle! Checking best path...");
+    
+    // Stop to kill forward momentum
+    stopMotors();
+    delay(300); 
+    
+    // 1. Look Right (90 degrees CW - Slow Turn)
+    turnRight();
+    delay(TURN_90_DELAY); 
+    stopMotors();
+    delay(400); // Wait for chassis to completely settle before pinging
+    long distRight = getDistance();
+    Serial.print("Right Distance: "); Serial.println(distRight);
+
+    // 2. Look Left (180 degrees ACW to face the other way - Slow Turn)
+    turnLeft();
+    delay(TURN_90_DELAY * 2); 
+    stopMotors();
+    delay(400);
+    long distLeft = getDistance();
+    Serial.print("Left Distance: "); Serial.println(distLeft);
+
+    // 3. Choose the best path
+    if (distRight > distLeft) {
+      Serial.println("Right is better. Turning right smoothly...");
+      // We are currently facing left, so slowly turn 180 degrees CW to face right again
+      turnRight();
+      delay(TURN_90_DELAY * 2);
+    } else {
+      Serial.println("Left is better. Proceeding...");
+      // We are already facing left, so we don't need to turn again!
+    }
+    
+    // Final pause to kill turning inertia before driving straight
+    stopMotors();
+    delay(300);
+    
+  } else {
+    // Path is clear, go straight!
+    moveForward();
+  }
+  
+  delay(50); 
+}
+
+// --- Sensor Function ---
+
+long getDistance() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(5);
+  
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000); 
+  
+  if (duration == 0) return 999; 
+  
+  long dist = (duration * 0.0343) / 2;
+  return dist;
+}
+
+// --- Movement Functions ---
+
+void moveForward() {
+  analogWrite(PWMA, SPEED);
+  analogWrite(PWMB, SPEED);
+  
+  // Left Motor Forward
+  digitalWrite(AIN2, HIGH);
+  digitalWrite(AIN1, LOW);
+  // Right Motor Forward 
+  digitalWrite(BIN1, LOW);
+  digitalWrite(BIN2, HIGH);
+}
+
+void turnRight() {
+  analogWrite(PWMA, TURN_SPEED); 
+  analogWrite(PWMB, TURN_SPEED);
+  
+  // Left motor forward
+  digitalWrite(AIN2, HIGH);
+  digitalWrite(AIN1, LOW);
+  // Right motor backward
+  digitalWrite(BIN1, HIGH);
+  digitalWrite(BIN2, LOW);
+}
+
+void turnLeft() {
+  analogWrite(PWMA, TURN_SPEED); 
+  analogWrite(PWMB, TURN_SPEED);
+  
+  // Left motor backward
+  digitalWrite(AIN2, LOW);
+  digitalWrite(AIN1, HIGH);
+  // Right motor forward
+  digitalWrite(BIN1, LOW);
+  digitalWrite(BIN2, HIGH);
+}
+
+void stopMotors() {
+  analogWrite(PWMA, 0);
+  analogWrite(PWMB, 0);
+  
+  digitalWrite(AIN2, LOW);
+  digitalWrite(AIN1, LOW);
+  digitalWrite(BIN1, LOW);
+  digitalWrite(BIN2, LOW);
+}

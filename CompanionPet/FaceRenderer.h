@@ -24,7 +24,7 @@
 
 class FaceRenderer {
 public:
-  FaceRenderer() : _disp(SCREEN_W, SCREEN_H, &Wire, -1) {}
+  FaceRenderer() : _disp(SCREEN_W, SCREEN_H, &Wire, -1), _hasDisplay(false) {}
 
   bool begin() {
     _hasDisplay = _disp.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR);

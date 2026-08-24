@@ -139,7 +139,7 @@ private:
   void tickLookToward(unsigned long el) {
     switch (_step) {
       case 0:
-        if (_step == 0 && el < 5) motorTurnRight(GESTURE_SPEED_MED);
+        if (el < 5) motorTurnRight(GESTURE_SPEED_MED);
         if (el >= 150) { motorStop(); advanceStep(); }
         break;
       case 1:
@@ -221,6 +221,9 @@ private:
     analogWrite(MOTOR_B_PWM, speed);
   }
   static void motorStop() {
+    // TB6612FNG brake mode: DIR=LOW + PWM=0 (prevents coast/glitch lurching)
+    digitalWrite(MOTOR_A_DIR, LOW);
+    digitalWrite(MOTOR_B_DIR, LOW);
     analogWrite(MOTOR_A_PWM, 0);
     analogWrite(MOTOR_B_PWM, 0);
   }
